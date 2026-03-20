@@ -8,12 +8,30 @@
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body class="bg-gray-50">
   <div id="root"></div>
 
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQpUdNZOtUe-Eh_IC7XWu5vvXzBfoU1Zg",
+      authDomain: "bookvaa-7fe07.firebaseapp.com",
+      projectId: "bookvaa-7fe07",
+      storageBucket: "bookvaa-7fe07.firebasestorage.app",
+      messagingSenderId: "670311702881",
+      appId: "1:670311702881:web:a77be7831bc3f946ad6520"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
+
   <script type="text/babel">
-    const { useState } = React;
+    const { useState, useEffect } = React;
 
     function App() {
       const [books, setBooks] = useState([]);
@@ -22,16 +40,22 @@
         title: "",
         author: "",
         price: "",
-        type: "sell",
-        description: "",
         location: "",
         image: "",
       });
 
-      const handleSubmit = (e) => {
+      // Fetch books from Firebase
+      useEffect(() => {
+        db.collection("books").onSnapshot((snapshot) => {
+          const data = snapshot.docs.map(doc => doc.data());
+          setBooks(data);
+        });
+      }, []);
+
+      const handleSubmit = async (e) => {
         e.preventDefault();
-        setBooks([{ ...form }, ...books]);
-        setForm({ title: "", author: "", price: "", type: "sell", description: "", location: "", image: "" });
+        await db.collection("books").add(form);
+        setForm({ title: "", author: "", price: "", location: "", image: "" });
       };
 
       const filteredBooks = books.filter((book) =>
@@ -40,12 +64,10 @@
 
       return (
         <div>
-          {/* Navbar */}
           <div className="flex justify-between items-center p-4 bg-white shadow">
             <h1 className="text-2xl font-bold">📚 Bookvaa</h1>
           </div>
 
-          {/* Hero */}
           <div className="text-center py-10">
             <h2 className="text-3xl font-bold">Find Free & Affordable Books</h2>
             <input
@@ -57,7 +79,6 @@
             />
           </div>
 
-          {/* Form */}
           <div className="max-w-4xl mx-auto bg-white p-6 rounded shadow mb-10">
             <h3 className="text-xl mb-4">Post a Book</h3>
             <form onSubmit={handleSubmit} className="grid gap-3">
@@ -70,7 +91,6 @@
             </form>
           </div>
 
-          {/* Listings */}
           <div className="max-w-6xl mx-auto px-4">
             <h3 className="text-xl mb-4">Browse Books</h3>
             <div className="grid md:grid-cols-3 gap-4">
