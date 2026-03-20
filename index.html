@@ -42,6 +42,7 @@
         price: "",
         location: "",
         image: "",
+        phone: "",
       });
 
       // Fetch books from Firebase
@@ -87,6 +88,7 @@
               <input placeholder="Price (0 = Free)" type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="border p-2" />
               <input placeholder="Location" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} className="border p-2" />
               <input placeholder="Image URL" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} className="border p-2" />
+              <input placeholder="WhatsApp Number" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="border p-2" />
               <button className="bg-black text-white py-2">Post Book</button>
             </form>
           </div>
@@ -101,6 +103,13 @@
                   <p>{book.author}</p>
                   <p>{book.price == 0 ? "FREE" : `₹${book.price}`}</p>
                   <p>{book.location}</p>
+                  <a
+                     href={`https://wa.me/${book.phone}`}
+                     target="_blank"
+                     className="block mt-2 bg-green-500 text-white text-center py-1"
+                  >
+                  Contact Seller
+                  </a>
                 </div>
               ))}
             </div>
