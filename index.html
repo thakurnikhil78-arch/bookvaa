@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bookvaa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-gray-50">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    function App() {
+      const [books, setBooks] = useState([]);
+      const [search, setSearch] = useState("");
+      const [form, setForm] = useState({
+        title: "",
+        author: "",
+        price: "",
+        type: "sell",
+        description: "",
+        location: "",
+        image: "",
+      });
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        setBooks([{ ...form }, ...books]);
+        setForm({ title: "", author: "", price: "", type: "sell", description: "", location: "", image: "" });
+      };
+
+      const filteredBooks = books.filter((book) =>
+        book.title.toLowerCase().includes(search.toLowerCase())
+      );
+
+      return (
+        <div>
+          {/* Navbar */}
+          <div className="flex justify-between items-center p-4 bg-white shadow">
+            <h1 className="text-2xl font-bold">📚 Bookvaa</h1>
+          </div>
+
+          {/* Hero */}
+          <div className="text-center py-10">
+            <h2 className="text-3xl font-bold">Find Free & Affordable Books</h2>
+            <input
+              type="text"
+              placeholder="Search books..."
+              className="mt-4 p-3 w-1/2 border rounded"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          {/* Form */}
+          <div className="max-w-4xl mx-auto bg-white p-6 rounded shadow mb-10">
+            <h3 className="text-xl mb-4">Post a Book</h3>
+            <form onSubmit={handleSubmit} className="grid gap-3">
+              <input placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="border p-2" required />
+              <input placeholder="Author" value={form.author} onChange={(e) => setForm({ ...form, author: e.target.value })} className="border p-2" required />
+              <input placeholder="Price (0 = Free)" type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="border p-2" />
+              <input placeholder="Location" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} className="border p-2" />
+              <input placeholder="Image URL" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} className="border p-2" />
+              <button className="bg-black text-white py-2">Post Book</button>
+            </form>
+          </div>
+
+          {/* Listings */}
+          <div className="max-w-6xl mx-auto px-4">
+            <h3 className="text-xl mb-4">Browse Books</h3>
+            <div className="grid md:grid-cols-3 gap-4">
+              {filteredBooks.map((book, i) => (
+                <div key={i} className="bg-white p-4 shadow">
+                  {book.image && <img src={book.image} className="h-40 w-full object-cover" />}
+                  <h4 className="font-bold">{book.title}</h4>
+                  <p>{book.author}</p>
+                  <p>{book.price == 0 ? "FREE" : `₹${book.price}`}</p>
+                  <p>{book.location}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
